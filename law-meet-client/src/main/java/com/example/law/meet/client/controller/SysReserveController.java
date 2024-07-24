@@ -2,23 +2,25 @@ package com.example.law.meet.client.controller;
 
 
 import com.example.law.meet.client.Vo.WxReserveInfo;
-import com.example.law.meet.client.service.SelReserveService;
+import com.example.law.meet.client.service.SysReserveService;
+import com.example.law.meet.common.utils.Result;
 import com.example.law.meet.db.entity.SysReserve;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 
 
 @RestController
 @RequestMapping("/reserve")
 public class SysReserveController {
     @Autowired
-    private SelReserveService selReserveService;
+    private SysReserveService sysReserveService;
     //查询预约
     @PostMapping("/reserveInfo")
     public Object  reserveInfo(@RequestBody WxReserveInfo wxReserveInfo){
 
-        SysReserve reserve =  selReserveService.queryServeInfo(wxReserveInfo.getId());
+        SysReserve reserve =  sysReserveService.queryServeInfo(wxReserveInfo.getId());
 
             return  reserve;
         }
@@ -27,7 +29,7 @@ public class SysReserveController {
     public Object InsertReserveInfo (@RequestBody WxReserveInfo  wxReserveInfo) {// @RequestParam("file")MultipartFile file,
 
         int isReserve = 1;
-        isReserve = selReserveService.queryIsinserRserveInfo(wxReserveInfo);
+        isReserve = sysReserveService.queryIsinserRserveInfo(wxReserveInfo);
         ;
         return  isReserve;
 
@@ -42,8 +44,9 @@ public class SysReserveController {
      * 预约成功通知
      * */
     @GetMapping("/approved")
-    public void approved(){
-
+    public Result approved(@RequestParam Integer userId){
+        List<String> list =  sysReserveService.approved(userId);
+        return Result.success();
     }
 
 
