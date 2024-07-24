@@ -143,12 +143,12 @@ public class OperationLogAspect {
      * @throws Exception
      */
     public void getControllerMethodDescription(JoinPoint joinPoint, OperationLog log, OperationLogEntity operationLog, Object jsonResult) throws Exception {
-        // 设置业务类型（从注解中获取）
-        operationLog.setBusinessType(log.businessType().getCode());
         // 设置操作标题（从注解中获取）
         operationLog.setTitle(log.title());
         // 设置操作详情（从注解中获取）
         operationLog.setDetail(log.detail());
+        // 设置业务类型（从注解中获取）
+        operationLog.setBusinessType(log.businessType().getCode());
         // 设置操作人类型（从注解中获取）
         operationLog.setOperatorType(log.operatorType().getCode());
         // 如果需要保存请求数据，提取并设置请求参数
