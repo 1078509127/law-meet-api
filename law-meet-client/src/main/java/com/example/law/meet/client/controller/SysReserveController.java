@@ -2,17 +2,11 @@ package com.example.law.meet.client.controller;
 
 
 import com.example.law.meet.client.Vo.WxReserveInfo;
-import com.example.law.meet.client.service.AuthService;
-import com.example.law.meet.client.service.SelReserveService;
-import com.example.law.meet.common.utils.Result;
+import com.example.law.meet.client.service.SysReserveService;
 import com.example.law.meet.db.entity.SysReserve;
-import com.mysql.cj.xdevapi.InsertResult;
-import org.bouncycastle.crypto.signers.ISOTrailers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.text.ParseException;
 import java.util.List;
 
 
@@ -20,12 +14,12 @@ import java.util.List;
 @RequestMapping("/reserve")
 public class SysReserveController {
     @Autowired
-    private SelReserveService selReserveService;
+    private SysReserveService sysReserveService;
     //查询预约
     @PostMapping("/reserveInfo")
     public Object  reserveInfo(@RequestBody WxReserveInfo wxReserveInfo){
 
-        SysReserve sysreserve =  selReserveService.queryServeInfo(wxReserveInfo.getId());
+        SysReserve sysreserve =  sysReserveService.queryServeInfo(wxReserveInfo.getId());
 
             return  sysreserve;
         }
@@ -34,7 +28,7 @@ public class SysReserveController {
     public Object InsertReserveInfo (@RequestBody WxReserveInfo  wxReserveInfo) {// @RequestParam("file")MultipartFile file,
 
         int isReserve = 1;
-        isReserve = selReserveService.queryIsinserRserveInfo(wxReserveInfo);
+        isReserve = sysReserveService.queryIsinserRserveInfo(wxReserveInfo);
         return  isReserve;
 
     }
@@ -42,18 +36,18 @@ public class SysReserveController {
     @PostMapping("/timeReserveInfo")
     public Object timeReserveInfo (@RequestBody WxReserveInfo  wxReserveInfo) {
 
-        String ReserveTmie="";
+        //String ReserveTmie="";
+        List<WxReserveInfo> isRetime = null;
+        isRetime = sysReserveService.queryReserveTmie(wxReserveInfo);
 
-        selReserveService.queryReserveTmie(wxReserveInfo);
-
-        return  ReserveTmie;
+        return  isRetime;
 
     }
     //预约历史和状态
     @PostMapping("/history")
     public Object historyReserveInfo (@RequestBody WxReserveInfo  wxReserveInfo) {
 
-        List<SysReserve> reservesList= selReserveService.queryHistoryReserveInfo(wxReserveInfo);
+        List<SysReserve> reservesList= sysReserveService.queryHistoryReserveInfo(wxReserveInfo);
 
         return  reservesList;
 

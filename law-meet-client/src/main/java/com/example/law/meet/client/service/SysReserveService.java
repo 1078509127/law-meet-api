@@ -7,13 +7,13 @@ import java.util.List;
 
 public interface SysReserveService {
    //查询预约信息
-   SysReserve queryServeInfo(String reserveId);
+   SysReserve queryServeInfo(int reserveId);
 
    // 添加预约信息
    int  queryIsinserRserveInfo(WxReserveInfo wxReserveInfo) ;
 
    // 时间冲突检测
-   Object queryReserveTmie(WxReserveInfo wxReserveInfo);
+   List<WxReserveInfo> queryReserveTmie(WxReserveInfo wxReserveInfo);
 
    List<SysReserve> queryHistoryReserveInfo (WxReserveInfo wxReserveInfo);
    // 添加预约信息 自己写的方法
