@@ -1,0 +1,39 @@
+#============================#
+# server 配置
+#============================#
+server:
+  port: 8080
+  max-http-header-size: 10240
+  servlet:
+    context-path: /client
+    session:
+      cookie:
+        name: client-session1   #防止cookie冲突，登陆验证不通过
+
+#============================#
+# spring 配置
+#============================#
+spring:
+  application:
+    name: spring-meeting-client
+  profiles:
+    active: dev
+  servlet:
+    multipart:
+      max-request-size: 100MB
+      max-file-size: 100MB
+
+security:
+  oauth2:
+    client:
+      client-id: web-client
+      client-secret: client-secret-8888
+      user-authorization-uri: http://localhost:9090/sso/oauth/authorize  #oauth认证地址
+      access-token-uri: http://localhost:9090/sso/oauth/token  #获取access_token
+    resource:
+      jwt:
+        key-uri: http://localhost:9090/sso/oauth/token_key  #获取和校验JWT(包装获取access_token)
+        key-value: jwt-8888
+      token-info-uri: http://localhost:9090/sso/oauth/check_token
+
+

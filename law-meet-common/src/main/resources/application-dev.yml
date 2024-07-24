@@ -1,0 +1,45 @@
+spring:
+  datasource:
+    druid:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://localhost:3308/sys-meet-data?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true&verifyServerCertificate=false&useSSL=false
+      username: root
+      password: root
+      initial-size: 10
+      max-active: 50
+      min-idle: 10
+      max-wait: 60000
+      pool-prepared-statements:  true
+      max-pool-prepared-statement-per-connection-size:  20
+      validation-query: SELECT 1 FROM DUAL
+      test-on-borrow: false
+      test-on-return: false
+      test-while-idle: true
+      time-between-eviction-runs-millis: 60000
+      filters: stat,wall
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+
+logging:
+  level:
+    com.example.law.meet.db.dao: DEBUG
+    com.example.meet.oauth.serve: DEBUG
+    com.example.law.oauth.client: DEBUG
+
+law:
+  # 开发者应该设置成自己的wx相关信息
+  wx:
+    app-id: wx583d6942b050e08d
+    app-secret: 7b82490d9f202b03bdad002e982603d9
+    #app-id: wx546a4c409ec469cd
+    #app-secret: 251d7a20fb32331569879a4c41b66ff0
+    mch-id: 1538666666
+    mch-key: 1538xxxxxx-1538xxxxxx-1538xxxxxx
+    notify-url: https://test.dtsshop.com/demo/order/dtsNotify
+    access-token: https://api.weixin.qq.com/cgi-bin/token
+    template-id: FAapMIqVsN3El4ONaIeHha1B0LHuYkJE4yCzLnCvMvk
+    subscribe-url: https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=
+    # 商户证书文件路径
+    # 请参考“商户证书”一节 https://pay.weixin.qq.com/wiki/doc/api/wxa/wxa_api.php?chapter=4_3
+    key-path: xxxxx
