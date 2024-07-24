@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.text.ParseException;
-import java.util.List;
 
 
 @RestController
@@ -35,27 +34,8 @@ public class SysReserveController {
 
         int isReserve = 1;
         isReserve = selReserveService.queryIsinserRserveInfo(wxReserveInfo);
-
+        ;
         return  isReserve;
-
-    }
-    //时间冲突检测
-    @PostMapping("/timeReserveInfo")
-    public Object timeReserveInfo (@RequestBody WxReserveInfo  wxReserveInfo) {
-
-        String ReserveTmie="";
-        selReserveService.queryReserveTmie(wxReserveInfo);
-
-        return  ReserveTmie;
-
-    }
-    //预约历史和状态
-    @PostMapping("/history")
-    public Object historyReserveInfo (@RequestBody WxReserveInfo  wxReserveInfo) {
-
-        List<Reserve> reservesList= selReserveService.queryHistoryReserveInfo(wxReserveInfo);
-
-        return  reservesList;
 
     }
 
