@@ -11,9 +11,9 @@ import java.util.Date;
 @NoArgsConstructor
 public class WxReserveInfo {
     // 预约人id
-    String id;
+    int id;
     //预约人姓名
-    String  userId;
+    int  userId;
     // 预约人手机号
     String  phone;
     // 预约看守所
