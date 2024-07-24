@@ -3,12 +3,12 @@ package com.example.law.meet.client.controller;
 
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
+import com.alibaba.fastjson.JSONObject;
 import com.example.law.meet.client.service.AuthService;
 import com.example.law.meet.common.utils.Result;
 import com.example.law.meet.db.entity.SysUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,9 +39,11 @@ public class SysUserController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody SysUser user){
+    public Result login(@RequestBody SysUser user){
         ResponseEntity login = authService.login(user);
-        return "success";
+        Object body = login.getBody();
+        Map map = JSONObject.parseObject((String)body, Map.class);
+        return Result.success(map);
     }
 
     @GetMapping("/loginByWx")
