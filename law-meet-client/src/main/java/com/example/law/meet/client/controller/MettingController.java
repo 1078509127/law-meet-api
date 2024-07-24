@@ -1,7 +1,7 @@
 package com.example.law.meet.client.controller;
 
 import com.example.law.meet.client.service.AuthService;
-import com.example.law.meet.client.service.MettingService;
+import com.example.law.meet.client.service.SysMettingService;
 import com.example.law.meet.db.entity.Metting;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +13,7 @@ import java.util.List;
 @RequestMapping("/metting")
 public class MettingController {
     @Autowired
-    private MettingService mettingService;
+    private SysMettingService sysmettingService;
     @Autowired
     private AuthService authService;
 
@@ -21,7 +21,7 @@ public class MettingController {
     @PostMapping("/addmetting")
     public Object  addmetting(@RequestBody Metting metting){
 
-    int addMetting =  mettingService.addMetting(metting);
+    int addMetting =  sysmettingService.addMetting(metting);
 
         return  addMetting;
     }

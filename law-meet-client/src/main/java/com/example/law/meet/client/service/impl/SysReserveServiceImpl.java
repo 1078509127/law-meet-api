@@ -8,10 +8,12 @@ import com.example.law.meet.db.dao.SysReveserMapper;
 import com.example.law.meet.db.entity.SysReserve;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -19,26 +21,23 @@ import java.util.List;
 
 @Service
 public class SysReserveServiceImpl implements SysReserveService {
+
     @Autowired(required = false)
     //private ReserveMapper
-    private SysReveserMapper reveserMapper;
+    private SysReveserMapper sysreveserMapper;
 
-
-
-//查询一条
 
     @Override
-    public SysReserve queryServeInfo(String reserveId) {
+    public SysReserve queryServeInfo(int reserveId) {
         LambdaQueryWrapper<SysReserve> queryWrapper = new LambdaQueryWrapper<>();
 
         queryWrapper.eq(SysReserve::getId,reserveId);
-        SysReserve reserve = reveserMapper.selectOne(queryWrapper);
+        SysReserve reserve = sysreveserMapper.selectOne(queryWrapper);
         return  reserve;
-
     }
 
     @Override
-    public int queryIsinserRserveInfo(WxReserveInfo wxReserveInfo)  {
+    public int queryIsinserRserveInfo(WxReserveInfo wxReserveInfo) {
         LambdaQueryWrapper<SysReserve> queryWrapper = new LambdaQueryWrapper<>();
 
         SysReserve reserve = new SysReserve();
@@ -64,21 +63,57 @@ public class SysReserveServiceImpl implements SysReserveService {
 
 
         }catch (ParseException e) {
-             e.printStackTrace();
+            e.printStackTrace();
         }
 
 
-        int inser = reveserMapper.insert(reserve);
+        int inser = sysreveserMapper.insert(reserve);
 
         return inser;
 
     }
 
     @Override
-    public List<String> approved(Integer userId) {
-        List<String> approved = reveserMapper.approved(userId, StareEnums.APPROVED.getCode(), StareEnums.VIEW.getCode());
-        return approved;
+    public List<WxReserveInfo> queryReserveTmie(WxReserveInfo wxReserveInfo) {
+        List<WxReserveInfo> wx = null;
+        List<String> s = new ArrayList<>();
+
+        LambdaQueryWrapper<SysReserve> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.gt(SysReserve::getStrTime, wxReserveInfo.getStrTime());
+        queryWrapper.lt(SysReserve::getStrTime, wxReserveInfo.getStrTime());
+        SysReserve reserve = sysreveserMapper.selectOne(queryWrapper);
+        //如果不为空
+        if (!StringUtils.isEmpty(reserve)) {
+            //时间冲突
+        }else{
+            // 正常插入预约
+          int isInsert=  sysreveserMapper.insert(reserve);
+
+
+        }
+
+        //TODO
+        //user.setPassWord(SecurityUtils.encodePassword(user.getPassWord()));
+        return  null;//sysreveserMapper.insert(reserve);
     }
 
+    @Override
+    public List<SysReserve> queryHistoryReserveInfo(WxReserveInfo wxReserveInfo) {
+        LambdaQueryWrapper<SysReserve> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(SysReserve::getUserId,wxReserveInfo.getUserId());
+        List<SysReserve>  reserve = sysreveserMapper.selectList(queryWrapper);
+        return reserve;
+    }
+
+    @Override
+    public Boolean add(WxReserveInfo wxReserveInfo) {
+        return null;
+    }
+
+    @Override
+    public List<String> approved(Integer userId) {
+        List<String> approved = sysreveserMapper.approved(userId, StareEnums.APPROVED.getCode(), StareEnums.VIEW.getCode());
+        return approved;
+    }
 }
 
