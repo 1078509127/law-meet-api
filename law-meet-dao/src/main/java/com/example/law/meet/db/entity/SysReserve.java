@@ -3,12 +3,11 @@ package com.example.law.meet.db.entity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
-@TableName("sys-reserve")//预约
-public class Reserve {
+@TableName("sys_reserve")//预约
+public class SysReserve {
 
     // 预约人id
     String id;

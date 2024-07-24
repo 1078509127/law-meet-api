@@ -2,17 +2,11 @@ package com.example.law.meet.client.controller;
 
 
 import com.example.law.meet.client.Vo.WxReserveInfo;
-import com.example.law.meet.client.service.AuthService;
 import com.example.law.meet.client.service.SelReserveService;
-import com.example.law.meet.common.utils.Result;
-import com.example.law.meet.db.entity.Reserve;
-import com.mysql.cj.xdevapi.InsertResult;
-import org.bouncycastle.crypto.signers.ISOTrailers;
+import com.example.law.meet.db.entity.SysReserve;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.text.ParseException;
 
 
 @RestController
@@ -24,7 +18,7 @@ public class SysReserveController {
     @PostMapping("/reserveInfo")
     public Object  reserveInfo(@RequestBody WxReserveInfo wxReserveInfo){
 
-        Reserve reserve =  selReserveService.queryServeInfo(wxReserveInfo.getId());
+        SysReserve reserve =  selReserveService.queryServeInfo(wxReserveInfo.getId());
 
             return  reserve;
         }
@@ -38,5 +32,19 @@ public class SysReserveController {
         return  isReserve;
 
     }
+
+
+
+
+
+
+    /**
+     * 预约成功通知
+     * */
+    @GetMapping("/approved")
+    public void approved(){
+
+    }
+
 
 }

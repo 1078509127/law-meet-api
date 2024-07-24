@@ -4,8 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.law.meet.client.Vo.WxReserveInfo;
 import com.example.law.meet.client.service.SelReserveService;
 import com.example.law.meet.db.dao.ReveserMapper;
-import com.example.law.meet.db.entity.Reserve;
-import com.example.law.meet.db.entity.SysUser;
+import com.example.law.meet.db.entity.SysReserve;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,10 +12,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
-import java.util.Locale;
-
-import static jodd.datetime.JDateTimeDefault.format;
-import static net.sf.jsqlparser.util.validation.metadata.NamedObject.user;
 
 
 @Service
@@ -30,20 +25,20 @@ public class SelReserveServiceImpl implements SelReserveService {
 //查询一条
 
     @Override
-    public Reserve queryServeInfo(String reserveId) {
-        LambdaQueryWrapper<Reserve> queryWrapper = new LambdaQueryWrapper<>();
+    public SysReserve queryServeInfo(String reserveId) {
+        LambdaQueryWrapper<SysReserve> queryWrapper = new LambdaQueryWrapper<>();
 
-        queryWrapper.eq(Reserve::getId,reserveId);
-        Reserve reserve = reveserMapper.selectOne(queryWrapper);
+        queryWrapper.eq(SysReserve::getId,reserveId);
+        SysReserve reserve = reveserMapper.selectOne(queryWrapper);
         return  reserve;
 
     }
 
     @Override
     public int queryIsinserRserveInfo(WxReserveInfo wxReserveInfo)  {
-        LambdaQueryWrapper<Reserve> queryWrapper = new LambdaQueryWrapper<>();
+        LambdaQueryWrapper<SysReserve> queryWrapper = new LambdaQueryWrapper<>();
 
-        Reserve reserve = new Reserve();
+        SysReserve reserve = new SysReserve();
 
         String str= wxReserveInfo.getDataDay() + " " + wxReserveInfo.getStrTime()+":00";
         String end = wxReserveInfo.getDataDay() + " " + wxReserveInfo.getEndTime()+":00";

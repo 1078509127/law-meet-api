@@ -1,4 +1,4 @@
-package com.example.law.meet.client.utils;
+package com.example.law.meet.common.utils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
