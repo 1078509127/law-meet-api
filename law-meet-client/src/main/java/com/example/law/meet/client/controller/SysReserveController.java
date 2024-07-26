@@ -16,19 +16,21 @@ public class SysReserveController {
     @Autowired
     private SysReserveService sysReserveService;
     //查询预约
-    @PostMapping("/reserveInfo")
-    public Object  reserveInfo(@RequestBody WxReserveInfo wxReserveInfo){
+    @GetMapping("/reserveInfo")
+    public  List<SysReserve> reserveInfo(@RequestParam("userID") int userID){
 
-        SysReserve sysreserve =  sysReserveService.queryServeInfo(wxReserveInfo.getId());
-
-            return  sysreserve;
-        }
+        List<SysReserve> sysReserve =  sysReserveService.queryServeInfo(userID);
+        return  sysReserve;
+    }
     // 添加预约
     @PostMapping("/InsertReserveInfo")
-    public Object InsertReserveInfo (@RequestBody WxReserveInfo  wxReserveInfo) {// @RequestParam("file")MultipartFile file,
+    public Object InsertReserveInfo (@RequestBody SysReserve sysReserve) {//WxReserveInfo  wxReserveInfo @RequestParam("file")MultipartFile file,
 
         int isReserve = 1;
-        isReserve = sysReserveService.queryIsinserRserveInfo(wxReserveInfo);
+        sysReserve.setUser_id(1);
+        sysReserve.setImg_url("1");
+        sysReserve.setRestatus(0);
+        isReserve = sysReserveService.queryIsinserRserveInfo(sysReserve);
         return  isReserve;
 
     }

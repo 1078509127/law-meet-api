@@ -5,6 +5,7 @@ import com.example.law.meet.client.Vo.WxReserveInfo;
 import com.example.law.meet.client.service.SysReserveService;
 import com.example.law.meet.common.utils.StareEnums;
 import com.example.law.meet.db.dao.SysReveserMapper;
+import com.example.law.meet.db.dao.SysUserMapper;
 import com.example.law.meet.db.entity.SysReserve;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,9 +13,7 @@ import org.springframework.util.StringUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -22,56 +21,67 @@ import java.util.List;
 @Service
 public class SysReserveServiceImpl implements SysReserveService {
 
+
     @Autowired(required = false)
-    //private ReserveMapper
     private SysReveserMapper sysreveserMapper;
 
 
     @Override
-    public SysReserve queryServeInfo(int reserveId) {
-        LambdaQueryWrapper<SysReserve> queryWrapper = new LambdaQueryWrapper<>();
+    public List<SysReserve> queryServeInfo(int reserveId) {
 
-        queryWrapper.eq(SysReserve::getId,reserveId);
-        SysReserve reserve = sysreveserMapper.selectOne(queryWrapper);
+
+        LambdaQueryWrapper<SysReserve> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(SysReserve::getUser_id,reserveId);
+
+        List<SysReserve>  reserve = sysreveserMapper.selectList(queryWrapper);
         return  reserve;
     }
 
     @Override
-    public int queryIsinserRserveInfo(WxReserveInfo wxReserveInfo) {
-        LambdaQueryWrapper<SysReserve> queryWrapper = new LambdaQueryWrapper<>();
-
-        SysReserve reserve = new SysReserve();
-
-        String str= wxReserveInfo.getDataDay() + " " + wxReserveInfo.getStrTime()+":00";
-        String end = wxReserveInfo.getDataDay() + " " + wxReserveInfo.getEndTime()+":00";
-        SimpleDateFormat strDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-        LocalDate s ;
-        try{
-            Date strDateTime = strDate.parse(str);
-            Date endDateTime = strDate.parse(end);
-
-            reserve.setUserId(wxReserveInfo.getUserId());
-
-            reserve.setPhone(wxReserveInfo.getPhone());
-            reserve.setDesc(wxReserveInfo.getDesc());
-            reserve.setInterViewUser("1");
-            reserve.setImgUrl("1");
-            reserve.setRestatus("1");
-            reserve.setStrTime(strDateTime);
-            reserve.setEndTime(endDateTime);
-
-
-        }catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-
-        int inser = sysreveserMapper.insert(reserve);
-
-        return inser;
-
+    public int queryIsinserRserveInfo(SysReserve sysReserve) {
+        return sysreveserMapper.insert(sysReserve);
     }
+
+//    @Override
+//    public int queryIsinserRserveInfo(WxReserveInfo wxReserveInfo) {
+//        //LambdaQueryWrapper<SysReserve> queryWrapper = new LambdaQueryWrapper<>();
+//
+//        SysReserve reserve = new SysReserve();
+//        String str= wxReserveInfo.getStarDate() + " " + wxReserveInfo.getStarTime()+":00";
+//        String end = wxReserveInfo.getStarDate() + " " + wxReserveInfo.getEndTime()+":00";
+//        SimpleDateFormat strDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//
+//
+//        try{
+//            Date strDateTime = strDate.parse(str);
+//            Date endDateTime = strDate.parse(end);
+//
+//            reserve.setUser_id(1);//wxReserveInfo.getUserId()
+//
+//            reserve.setPhone(wxReserveInfo.getPhone());
+//            reserve.setInter_view_user("1111");
+//            reserve.setImg_url("1");
+//            reserve.setRestatus("1");
+//
+//
+//            reserve.setStart_time(strDateTime);
+//            reserve.setEnd_time(endDateTime);
+//            reserve.setAdd("11111s");
+//            reserve.setRemark(wxReserveInfo.getRemark());
+//
+//
+//
+//
+//        }catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+//
+//
+//        int inser = sysreveserMapper.insert(reserve);
+//
+//        return inser;
+//
+//    }
 
     @Override
     public List<WxReserveInfo> queryReserveTmie(WxReserveInfo wxReserveInfo) {
@@ -79,8 +89,9 @@ public class SysReserveServiceImpl implements SysReserveService {
         List<String> s = new ArrayList<>();
 
         LambdaQueryWrapper<SysReserve> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.gt(SysReserve::getStrTime, wxReserveInfo.getStrTime());
-        queryWrapper.lt(SysReserve::getStrTime, wxReserveInfo.getStrTime());
+        //TODO
+        queryWrapper.gt(SysReserve::getStart_time, wxReserveInfo.getStarTime());
+        queryWrapper.lt(SysReserve::getStart_time, wxReserveInfo.getStarTime());
         SysReserve reserve = sysreveserMapper.selectOne(queryWrapper);
         //如果不为空
         if (!StringUtils.isEmpty(reserve)) {
@@ -100,15 +111,12 @@ public class SysReserveServiceImpl implements SysReserveService {
     @Override
     public List<SysReserve> queryHistoryReserveInfo(WxReserveInfo wxReserveInfo) {
         LambdaQueryWrapper<SysReserve> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(SysReserve::getUserId,wxReserveInfo.getUserId());
+        queryWrapper.eq(SysReserve::getUser_id,wxReserveInfo.getUserId());
         List<SysReserve>  reserve = sysreveserMapper.selectList(queryWrapper);
         return reserve;
     }
 
-    @Override
-    public Boolean add(WxReserveInfo wxReserveInfo) {
-        return null;
-    }
+
 
     @Override
     public List<String> approved(Integer userId) {
