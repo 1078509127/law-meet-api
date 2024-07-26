@@ -1,9 +1,12 @@
 package com.example.law.meet.client.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.law.meet.client.service.AuthService;
 import com.example.law.meet.client.utils.SecurityUtils;
+import com.example.law.meet.db.dao.MettingMapper;
 import com.example.law.meet.db.dao.SysUserMapper;
+import com.example.law.meet.db.entity.Metting;
 import com.example.law.meet.db.entity.SysUser;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -21,7 +24,7 @@ import java.util.Map;
 
 
 @Service
-public class AuthServiceImpl implements AuthService {
+public class AuthServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements AuthService {
 
     @Value("${security.oauth2.client.client-id}")
     private String clientId;

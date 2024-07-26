@@ -11,5 +11,4 @@ public interface SysReveserMapper extends BaseMapper<SysReserve> {
 
     SysReserve getreserveinfo (String reId);
 
-    List<String> approved(Integer userId, Integer restatus,Integer isView);
 }

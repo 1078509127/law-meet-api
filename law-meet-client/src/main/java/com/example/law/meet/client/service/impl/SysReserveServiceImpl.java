@@ -1,9 +1,11 @@
 package com.example.law.meet.client.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.law.meet.client.Vo.WxReserveInfo;
 import com.example.law.meet.client.service.SysReserveService;
 import com.example.law.meet.common.utils.StareEnums;
+import com.example.law.meet.db.dao.SysReserveMessageMapper;
 import com.example.law.meet.db.dao.SysReveserMapper;
 import com.example.law.meet.db.dao.SysUserMapper;
 import com.example.law.meet.db.entity.SysReserve;
@@ -11,19 +13,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 
 @Service
-public class SysReserveServiceImpl implements SysReserveService {
+public class SysReserveServiceImpl extends ServiceImpl<SysReveserMapper, SysReserve> implements SysReserveService {
 
 
     @Autowired(required = false)
     private SysReveserMapper sysreveserMapper;
+    @Autowired(required = false)
+    private SysReserveMessageMapper sysReserveMessageMapper;
 
 
     @Override
@@ -119,8 +121,8 @@ public class SysReserveServiceImpl implements SysReserveService {
 
 
     @Override
-    public List<String> approved(Integer userId) {
-        List<String> approved = sysreveserMapper.approved(userId, StareEnums.APPROVED.getCode(), StareEnums.VIEW.getCode());
+    public List<Map<String,Object>> approved(Integer userId) {
+        List<Map<String,Object>> approved = sysReserveMessageMapper.approved(userId, StareEnums.APPROVED.getCode(), StareEnums.VIEW.getCode());
         return approved;
     }
 }
