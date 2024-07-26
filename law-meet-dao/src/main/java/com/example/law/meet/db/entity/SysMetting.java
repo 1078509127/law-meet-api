@@ -7,7 +7,7 @@ import java.util.Date;
 
 @Data
 @TableName("sys-metting")//预约
-public class Metting {
+public class SysMetting {
     // 预约人id
     String id;
     //预约人姓名

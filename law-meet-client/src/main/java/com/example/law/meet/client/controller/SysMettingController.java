@@ -2,16 +2,13 @@ package com.example.law.meet.client.controller;
 
 import com.example.law.meet.client.service.AuthService;
 import com.example.law.meet.client.service.SysMettingService;
-import com.example.law.meet.db.entity.Metting;
+import com.example.law.meet.db.entity.SysMetting;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-
 @RestController
 @RequestMapping("/metting")
-public class MettingController {
+public class SysMettingController {
     @Autowired
     private SysMettingService sysmettingService;
     @Autowired
@@ -19,9 +16,9 @@ public class MettingController {
 
     //添加会见
     @PostMapping("/addmetting")
-    public Object  addmetting(@RequestBody Metting metting){
+    public Object  addmetting(@RequestBody SysMetting sysMetting){
 
-    int addMetting =  sysmettingService.addMetting(metting);
+    int addMetting =  sysmettingService.addMetting(sysMetting);
 
         return  addMetting;
     }
