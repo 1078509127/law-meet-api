@@ -19,24 +19,12 @@ public class WxProperties {
 
 	private String keyPath;
 
-	public String getNotifyUrl() {
-		return notifyUrl;
-	}
+	private String token;
 
-	public void setNotifyUrl(String notifyUrl) {
-		this.notifyUrl = notifyUrl;
-	}
-
-	public String getMchKey() {
-		return mchKey;
-	}
-
-	public void setMchKey(String mchKey) {
-		this.mchKey = mchKey;
-	}
+	private String aesKey;
 
 	public String getAppId() {
-		return this.appId;
+		return appId;
 	}
 
 	public void setAppId(String appId) {
@@ -59,11 +47,43 @@ public class WxProperties {
 		this.mchId = mchId;
 	}
 
+	public String getMchKey() {
+		return mchKey;
+	}
+
+	public void setMchKey(String mchKey) {
+		this.mchKey = mchKey;
+	}
+
+	public String getNotifyUrl() {
+		return notifyUrl;
+	}
+
+	public void setNotifyUrl(String notifyUrl) {
+		this.notifyUrl = notifyUrl;
+	}
+
 	public String getKeyPath() {
 		return keyPath;
 	}
 
 	public void setKeyPath(String keyPath) {
 		this.keyPath = keyPath;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	public String getAesKey() {
+		return aesKey;
+	}
+
+	public void setAesKey(String aesKey) {
+		this.aesKey = aesKey;
 	}
 }

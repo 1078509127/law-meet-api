@@ -5,14 +5,22 @@ import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import com.alibaba.fastjson.JSONObject;
 import com.example.law.meet.client.service.AuthService;
+import com.example.law.meet.client.vo.UserInfo;
+import com.example.law.meet.client.vo.WxLoginInfo;
+import com.example.law.meet.common.utils.IpUtil;
+import com.example.law.meet.common.utils.ResponseUtil;
 import com.example.law.meet.common.utils.Result;
 import com.example.law.meet.db.entity.SysUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -20,7 +28,7 @@ import java.util.Map;
  * 登陆  注册  退出
  */
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/user")
 public class SysUserController {
 
     @Autowired
@@ -43,12 +51,27 @@ public class SysUserController {
         ResponseEntity login = authService.login(user);
         Object body = login.getBody();
         Map map = JSONObject.parseObject((String)body, Map.class);
-        return Result.success(map);
+        if (map.containsKey("access_token")){
+            Map<Object, Object> result = new HashMap<Object, Object>();
+            UserInfo userInfo = new UserInfo();
+            userInfo.setUserId((Integer) map.get("userId"));
+            userInfo.setUserName((String) map.get("userName"));
+            userInfo.setNickName((String) map.get("nickname"));
+            userInfo.setAuthorities((List<String>) map.get("authorities"));
+            result.put("token", map.get("access_token"));
+            result.put("userInfo", userInfo);
+            return Result.success(result);
+        }
+        return Result.fail();
     }
 
-    @GetMapping("/loginByWx")
-    public Object loginByWx(@RequestParam(required = true) String code, HttpServletRequest request) {
-        //调用微信
+    @PostMapping("/loginByWx")
+    public Object loginByWx(@RequestBody WxLoginInfo wxLoginInfo, HttpServletRequest request) {
+        String code = wxLoginInfo.getCode();
+        UserInfo userInfo = wxLoginInfo.getUserInfo();
+        if (code == null || userInfo == null) {
+            return Result.fail();
+        }
         String sessionKey = null;
         String openId = null;
         try {
@@ -58,66 +81,48 @@ public class SysUserController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //调用微信登陆失败
         if (sessionKey == null || openId == null) {
             return Result.fail();
         }
 
         //查询
-        SysUser sysUsers = authService.queryByWxOpenId(openId);
-        //没有就存到数据库
-        if (sysUsers == null) {
-            sysUsers = new SysUser();
-            sysUsers.setUserName(openId);
-            sysUsers.setPassWord(openId);
-            sysUsers.setWxOpenId(openId);
-            /*sysUsers.setAvatar(wxUserInfo.getAvatarUrl());
-            sysUsers.setNickname(wxUserInfo.getNickName());
-            sysUsers.setGender(wxUserInfo.getGender());*/
+        SysUser user = authService.queryByWxOpenId(openId);
+        if (user == null) {
+            user = new SysUser();
+            user.setUserName(openId);
+            user.setPassWord(openId);
+            user.setWeixinOpenid(openId);
+            user.setAvatar("https://9ly7904782sq.vicp.fun/wx/storage/用户.png");
+            user.setNickname(userInfo.getNickName());
+            user.setGender(userInfo.getGender());
+            user.setStatus((byte) 0);
+            user.setLastLoginTime(LocalDateTime.now());
+            user.setLastLoginIp(IpUtil.getIpAddr(request));
+            user.setSessionKey(sessionKey);
 
-            authService.add(sysUsers);
+            authService.add(user);
+        } else {
+            user.setLastLoginTime(LocalDateTime.now());
+            user.setLastLoginIp(IpUtil.getIpAddr(request));
+            user.setSessionKey(sessionKey);
+            if (!authService.updateById(user)) {
+                return ResponseUtil.updatedDataFailed();
+            }
         }
-        Map<String, Object> map = new HashMap<>();
-        map.put("token",sessionKey);
-        map.put("tokenExpire",6000);
-        map.put("userInfo",sysUsers);
-       /* // token
-        UserToken userToken = null;
-        try {
-            userToken = UserTokenManager.generateToken(user.getId());
-        } catch (Exception e) {
-            logger.error("微信登录失败,生成token失败：{}", user.getId());
-            e.printStackTrace();
-            return ResponseUtil.fail();
-        }
-        userToken.setSessionKey(sessionKey);
+
+        // token
 
         Map<Object, Object> result = new HashMap<Object, Object>();
-        result.put("token", userToken.getToken());
-        result.put("tokenExpire", userToken.getExpireTime().toString());
-        userInfo.setUserId(user.getId());
-        if (!StringUtils.isEmpty(user.getMobile())) {// 手机号存在则设置
-            userInfo.setPhone(user.getMobile());
-        }
-        try {
-            String registerDate = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-                    .format(user.getAddTime() != null ? user.getAddTime() : LocalDateTime.now());
-            userInfo.setRegisterDate(registerDate);
-            userInfo.setStatus(user.getStatus());
-            userInfo.setUserLevel(user.getUserLevel());// 用户层级
-            userInfo.setUserLevelDesc(UserTypeEnum.getInstance(user.getUserLevel()).getDesc());// 用户层级描述
-        } catch (Exception e) {
-            logger.error("微信登录：设置用户指定信息出错："+e.getMessage());
-            e.printStackTrace();
-        }
+        //result.put("token", token);
         result.put("userInfo", userInfo);
-
-        logger.info("【请求结束】微信登录,响应结果:{}", JSONObject.toJSONString(result));*/
-        return Result.success(map);
+        return ResponseUtil.ok(result);
     }
 
     @PostMapping("/logout")
     public void logout(@RequestBody SysUser user){
         authService.logout(user);
     }
+
+    @PostMapping("/userInfo")
+    public void getUserInfo(@RequestBody SysUser user){ }
 }

@@ -1,7 +1,7 @@
 package com.example.law.meet.client.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.example.law.meet.client.Vo.WxReserveInfo;
+import com.example.law.meet.client.vo.WxReserveInfo;
 import com.example.law.meet.db.entity.SysReserve;
 
 import java.util.List;

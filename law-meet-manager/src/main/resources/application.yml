@@ -1,6 +1,6 @@
 # server 配置
 server:
-  port: 8085
+  port: 7070
   max-http-header-size: 10240
   servlet:
     context-path: /manager

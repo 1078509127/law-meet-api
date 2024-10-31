@@ -32,11 +32,4 @@ public class SysReserve {
     String remark;
     // 预约状态
     int restatus;
-//    // 相关人员信息
-//    String  aboutName;
-//    // 相关人 联系方式
-//    String  aboutIphone;
-
-
-
 }

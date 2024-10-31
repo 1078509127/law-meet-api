@@ -21,19 +21,21 @@ spring:
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml
 
+
 logging:
   level:
-    com.example.law.meet.db.dao: DEBUG
-    com.example.meet.oauth.serve: DEBUG
-    com.example.law.oauth.client: DEBUG
+    com:
+      example:
+        law:
+          meet:
+            db:
+            dao: debug
 
 law:
   # 开发者应该设置成自己的wx相关信息
   wx:
-    app-id: wx583d6942b050e08d
-    app-secret: 7b82490d9f202b03bdad002e982603d9
-    #app-id: wx546a4c409ec469cd
-    #app-secret: 251d7a20fb32331569879a4c41b66ff0
+    app-id: wx546a4c409ec469cd
+    app-secret: 251d7a20fb32331569879a4c41b66ff0
     mch-id: 1538666666
     mch-key: 1538xxxxxx-1538xxxxxx-1538xxxxxx
     notify-url: https://test.dtsshop.com/demo/order/dtsNotify
@@ -43,3 +45,11 @@ law:
     # 商户证书文件路径
     # 请参考“商户证书”一节 https://pay.weixin.qq.com/wiki/doc/api/wxa/wxa_api.php?chapter=4_3
     key-path: xxxxx
+    # 消息推送配置token
+    token:
+    # 消息推送配置AesKey
+    aes-key:
+
+upload:
+  path: D:/storage/
+  address: http://localhost:8080/client/storage/

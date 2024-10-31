@@ -1,7 +1,7 @@
 package com.example.law.meet.client.controller;
 
 
-import com.example.law.meet.client.Vo.WxReserveInfo;
+import com.example.law.meet.client.vo.WxReserveInfo;
 import com.example.law.meet.client.service.SysReserveService;
 import com.example.law.meet.common.utils.Result;
 import com.example.law.meet.db.entity.SysReserve;

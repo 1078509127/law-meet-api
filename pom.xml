@@ -28,6 +28,9 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <spring-boot-dependencies.version>2.7.6</spring-boot-dependencies.version>
 
+        <shiro-spring-boot-web-starter.version>1.4.0</shiro-spring-boot-web-starter.version>
+        <pagehelper-spring-boot-starter.version>1.4.1</pagehelper-spring-boot-starter.version>
+        <spring-boot-starter-json.version>2.1.5.RELEASE</spring-boot-starter-json.version>
         <spring-boot-starter-security.version>2.6.1</spring-boot-starter-security.version>
         <spring-security-oauth2-autoconfigure.version>2.6.1</spring-security-oauth2-autoconfigure.version>
         <spring-boot-starter-oauth2-client.version>3.2.4</spring-boot-starter-oauth2-client.version>
@@ -36,7 +39,7 @@
         <weixin-java-pay.version>3.3.0</weixin-java-pay.version>
         <spring-boot-starter-aop.version>3.3.1</spring-boot-starter-aop.version>
         <spring-boot-configuration-processor.version>3.3.0</spring-boot-configuration-processor.version>
-        <spring-boot-starter-json.version>2.0.4.RELEASE</spring-boot-starter-json.version>
+        <spring-boot-starter-web.version>2.0.4.RELEASE</spring-boot-starter-web.version>
         <mysql-connector-java.version>8.0.29</mysql-connector-java.version>
         <druid-spring-boot-starter.version>1.2.8</druid-spring-boot-starter.version>
         <spring-boot-starter-jdbc.version>3.2.5</spring-boot-starter-jdbc.version>
@@ -47,10 +50,37 @@
 
     <dependencyManagement>
     <dependencies>
+
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-spring-boot-web-starter</artifactId>
+            <version>${shiro-spring-boot-web-starter.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper-spring-boot-starter</artifactId>
+            <version>${pagehelper-spring-boot-starter.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.mybatis</groupId>
+                    <artifactId>mybatis</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.mybatis</groupId>
+                    <artifactId>mybatis-spring</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-json</artifactId>
+            <version>${spring-boot-starter-json.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <version>${spring-boot-starter-json.version}</version>
+            <version>${spring-boot-starter-web.version}</version>
         </dependency>
 
         <!--OAuth2.0 spring-boot-starter-security/spring-security-oauth2配合使用 服务端-->

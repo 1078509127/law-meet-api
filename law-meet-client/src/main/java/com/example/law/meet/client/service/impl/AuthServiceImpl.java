@@ -4,9 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.law.meet.client.service.AuthService;
 import com.example.law.meet.client.utils.SecurityUtils;
-import com.example.law.meet.db.dao.MettingMapper;
 import com.example.law.meet.db.dao.SysUserMapper;
-import com.example.law.meet.db.entity.Metting;
 import com.example.law.meet.db.entity.SysUser;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -79,7 +77,7 @@ public class AuthServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impleme
     @Override
     public SysUser queryByWxOpenId(String openId) {
         LambdaQueryWrapper<SysUser> queryChainWrapper = new LambdaQueryWrapper<>();
-        queryChainWrapper.eq(SysUser::getWxOpenId,openId);
+        queryChainWrapper.eq(SysUser::getWeixinOpenid,openId);
         SysUser sysUser = sysUserMapper.selectOne(queryChainWrapper);
         return sysUser;
     }

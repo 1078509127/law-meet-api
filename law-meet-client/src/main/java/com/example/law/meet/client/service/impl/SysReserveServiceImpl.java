@@ -2,12 +2,11 @@ package com.example.law.meet.client.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.example.law.meet.client.Vo.WxReserveInfo;
+import com.example.law.meet.client.vo.WxReserveInfo;
 import com.example.law.meet.client.service.SysReserveService;
 import com.example.law.meet.common.utils.StareEnums;
 import com.example.law.meet.db.dao.SysReserveMessageMapper;
 import com.example.law.meet.db.dao.SysReveserMapper;
-import com.example.law.meet.db.dao.SysUserMapper;
 import com.example.law.meet.db.entity.SysReserve;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
