@@ -3,9 +3,9 @@
 
     <!-- 查询和其他操作 -->
     <div class="filter-container">
-      <el-input v-model="listQuery.username" clearable size="small" class="filter-item" style="width: 200px;" placeholder="请输入用户名"/>
-      <el-input v-model="listQuery.mobile" clearable size="small" class="filter-item" style="width: 200px;" placeholder="请输入手机号"/>
-      <el-select v-model="listQuery.statusArray" multiple size="small" style="width: 200px" class="filter-item" placeholder="请选择提现状态">
+      <el-input v-model="listQuery.name" clearable size="small" class="filter-item" style="width: 200px;" placeholder="请输入用户名"/>
+      <el-input v-model="listQuery.phone" clearable size="small" class="filter-item" style="width: 200px;" placeholder="请输入手机号"/>
+      <el-select v-model="listQuery.status" multiple size="small" style="width: 200px" class="filter-item" placeholder="请选择提现状态">
         <el-option v-for="(key, value) in statusMap" :key="key" :label="key" :value="value"/>
       </el-select>
       <el-button class="filter-item" type="primary" size="small" icon="el-icon-search" @click="handleFilter">查找</el-button>
@@ -13,45 +13,29 @@
 
     <!-- 查询结果 -->
     <el-table v-loading="listLoading" :data="list" size="small" element-loading-text="正在查询中。。。" border fit highlight-current-row>
-      <el-table-column align="center" width="100px" label="用户ID" prop="id" sortable/>
-
-      <el-table-column align="center" label="用户名" prop="nickname"/>
-
-      <el-table-column align="center" label="手机号码" prop="mobile"/>
-
-      <el-table-column align="center" label="性别" prop="gender">
+      <el-table-column align="center" width="100px" label="用户ID" prop="userId" sortable/>
+      <el-table-column align="center" label="用户名" prop="name"/>
+      <el-table-column align="center" label="手机号码" prop="phone"/>
+      <el-table-column align="center" label="预约地址" prop="address"/>
+      <el-table-column align="center" label="预约时间" prop="startTime"/>
+      <el-table-column align="center" label="预约说明" prop="remark"/>
+      <el-table-column align="center" label="审批状态" prop="status">
         <template slot-scope="scope">
-          {{ genderDic[scope.row.gender] }}
+          {{statusDic[scope.row.status]}}
         </template>
       </el-table-column>
-
-      <el-table-column align="center" label="预约地址" prop="birthday"/>
-
-      <el-table-column align="center" label="预约时间" prop="userLevel">
-        <template slot-scope="scope">
-          {{ levelDic[scope.row.userLevel] }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="预约说明" prop="birthday"/>
-      <el-table-column align="center" label="审批状态" prop="birthday"/>
-
       <el-table-column align="center" label="审批备注" prop="birthday"/>
-
-
       <el-table-column align="center" label="操作" width="120" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button v-permission="['GET /admin/brokerage/approve']" v-if="scope.row.status==0 || scope.row.status==2" type="primary" size="mini" @click="handleApprove(scope.row)">审批</el-button>
-          <el-button v-permission="['GET /admin/brokerage/approve']" v-else type="info" size="mini" >已审批</el-button>
+          <el-button v-permission="['GET /admin/brokerage/approve']" type="primary" size="mini" :disabled="scope.row.status=== 1 ||scope.row.status=== 2" @click="approval(scope.row)">审批</el-button>
         </template>
       </el-table-column>
-
     </el-table>
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
-    <!-- 审批窗口 -->
-    <el-dialog :visible.sync="approveDialogVisible" title="提现审批">
-      <el-form ref="approveForm" :rules="rules" :model="approveForm" status-icon label-position="left" label-width="100px" style="width: 400px; margin-left:50px;">
+    <el-dialog :visible.sync="approveDialogVisible" title="审批">
+      <el-form ref="approveForm" :rules="rules" :model="approveForm" status-icon label-position="left" label-width="100px" style="width: 70%; margin-left:50px;">
         <el-form-item label="是否通过" prop="status">
           <el-radio-group v-model="approveForm.status">
             <el-radio :label="1">通过</el-radio>
@@ -59,7 +43,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="审批备注" prop="traceMsg">
-          <el-input v-model="approveForm.traceMsg"/>
+          <el-input type="textarea" v-model="approveForm.traceMsg"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -72,7 +56,7 @@
 </template>
 
 <script>
-import { fetchList, approveTrace } from '@/api/business/brokerage'
+import { sqList } from '@/api/business/cert'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 import checkPermission from '@/utils/permission' // 权限判断函数
 
@@ -106,12 +90,11 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
-        username: undefined,
-        mobile: undefined,
-        statusArray: [],
-        sort: 'add_time',
-        order: 'desc'
+        name: undefined,
+        phone: undefined,
+        status: [],
       },
+      statusDic:['未审核','通过','驳回'],
       statusMap,
       typeMap,
       rules: {
@@ -134,8 +117,8 @@ export default {
     checkPermission,
     getList() {
       this.listLoading = true
-      fetchList(this.listQuery).then(response => {
-        this.list = response.data.data.traceList
+      sqList(this.listQuery).then(response => {
+        this.list = response.data.data.records
         this.total = response.data.data.total
         this.listLoading = false
       }).catch(() => {
@@ -148,7 +131,7 @@ export default {
       this.listQuery.page = 1
       this.getList()
     },
-    handleApprove(row) {
+    approval(row) {
       this.approveForm.id = row.id
       this.approveDialogVisible = true
       this.$nextTick(() => {
@@ -156,6 +139,7 @@ export default {
       })
     },
     confirmApprove() {
+      console.log(this.approveForm)
       this.$refs['approveForm'].validate((valid) => {
         if (valid) {
           approveTrace(this.approveForm).then(response => {

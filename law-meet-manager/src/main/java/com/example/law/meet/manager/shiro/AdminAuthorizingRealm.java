@@ -3,7 +3,7 @@ package com.example.law.meet.manager.shiro;
 
 import com.example.law.meet.common.utils.BCryptPasswordEncoder;
 import com.example.law.meet.db.entity.DtsAdmin;
-import com.example.law.meet.manager.service.DtsAdminService;
+import com.example.law.meet.manager.service.SysAdminService;
 import com.example.law.meet.manager.service.DtsPermissionService;
 import com.example.law.meet.manager.service.DtsRoleService;
 import org.apache.shiro.authc.*;
@@ -31,7 +31,7 @@ public class AdminAuthorizingRealm extends AuthorizingRealm {
 
 	private static final Logger logger = LoggerFactory.getLogger(AdminAuthorizingRealm.class);
 	@Autowired
-	private DtsAdminService adminService;
+	private SysAdminService adminService;
 	@Autowired
 	private DtsRoleService roleService;
 	@Autowired

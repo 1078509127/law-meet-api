@@ -9,4 +9,6 @@ import java.io.IOException;
 public interface SysCertService extends IService<SysCert> {
 
     int add(MultipartFile[] file,SysCert sysCert) throws IOException;
+
+    SysCert select(Integer userId);
 }

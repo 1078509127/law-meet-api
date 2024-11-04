@@ -43,6 +43,6 @@ public class JwtResourceServeConfig extends ResourceServerConfigurerAdapter {
 
     @Override
     public void configure(final HttpSecurity http) throws Exception {
-        http.authorizeRequests().antMatchers("/user/**").permitAll().anyRequest().authenticated().and().csrf().disable();
+        http.authorizeRequests().antMatchers("/user/**","/storage/**").permitAll().anyRequest().authenticated().and().csrf().disable();
     }
 }

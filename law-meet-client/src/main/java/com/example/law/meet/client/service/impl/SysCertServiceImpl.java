@@ -1,5 +1,6 @@
 package com.example.law.meet.client.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.law.meet.client.service.SysCertService;
 import com.example.law.meet.common.utils.UploadUtil;
@@ -10,10 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 
@@ -42,5 +40,12 @@ public class SysCertServiceImpl extends ServiceImpl<SysCertMapper, SysCert> impl
             UploadUtil.uploadFile(file,uploadPath,name);
         }
         return sysCertMapper.insert(sysCert);
+    }
+
+    @Override
+    public SysCert select(Integer userId) {
+        LambdaQueryWrapper<SysCert> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(SysCert::getUserId, userId);
+        return sysCertMapper.selectOne(queryWrapper);
     }
 }

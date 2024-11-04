@@ -63,4 +63,10 @@ public class SysCertController {
         }
         return Result.fail();
     }
+
+    @GetMapping("/select")
+    public Result select(@RequestParam Integer userId){
+        SysCert select = sysCertService.select(userId);
+        return Result.success(select);
+    }
 }

@@ -26,7 +26,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.formLogin().disable().logout().disable()
-            .authorizeRequests().antMatchers("/oauth/**","/login/**","/logout/**","/auth/**").permitAll()
+            .authorizeRequests().antMatchers("/user/**").permitAll()
             .anyRequest().authenticated()
             .and().csrf().disable();
         //成功和失败跳转
