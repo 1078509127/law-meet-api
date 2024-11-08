@@ -17,11 +17,23 @@
             <if test="phone != null and phone != ''">
                 and a.`phone` LIKE CONCAT('%', #{phone}, '%')
             </if>
-            <if test="status != null and status != ''">
-                and a.`status` in (#{status})
-            </if>
                 and a.`status` != 3
             ORDER BY create_time ASC
+        </where>
+    </select>
+
+    <select id="selectLists" resultType="com.example.law.meet.db.entity.SysMeetExample">
+        SELECT
+        a.*,
+        b.approval
+        FROM
+        `sys_meet` a
+        LEFT JOIN sys_meet_approval b ON a.id = b.meet_id
+        <where>
+            a.id IN
+            <foreach item="item" index="index" collection="id" open="(" separator="," close=")">
+                #{item}
+            </foreach>
         </where>
     </select>
 </mapper>

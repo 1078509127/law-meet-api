@@ -22,11 +22,11 @@ public class SysMeetController {
     private SysMeetService sysMeetService;
 
     @GetMapping("/list")
-    public Result list(@RequestParam(required = false) String name, @RequestParam(required = false) String phone, @RequestParam(required = false) Byte[] status,
+    public Result list(@RequestParam(required = false) String name, @RequestParam(required = false) String phone,
                        @RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer limit){
         IPage<SysMeetExample> pages = new Page<>(page, limit);
 
-        return Result.success(sysMeetService.list(pages,name,phone,status));
+        return Result.success(sysMeetService.list(pages,name,phone));
     }
 
     @PostMapping("/approval")

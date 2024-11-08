@@ -11,6 +11,7 @@ export function LsList(query) {
 
 export function LsDownload(data) {
   return request({
+    responseType: 'blob',
     url: '/cert/download',
     method: 'post',
     data
@@ -19,7 +20,7 @@ export function LsDownload(data) {
 
 export function LsApproval(data) {
   return request({
-    url: '/certApproval/approval',
+    url: '/cert/approval',
     method: 'post',
     data
   })
@@ -45,9 +46,35 @@ export function sqDownload(data) {
 
 export function sqApproval(data) {
   return request({
-    url: '/meetApproval/approval',
+    url: '/meet/approval',
     method: 'post',
     data
   })
 }
 
+
+//公告
+export function annSaveOrUpdate(data) {
+  return request({
+    url: '/announce/saveContent',
+    method: 'post',
+    data
+  })
+}
+
+export function annGet(query) {
+  return request({
+    url: '/announce/getContent',
+    method: 'get',
+    params: query
+  })
+}
+
+//意见反馈
+export function feedGet(query) {
+  return request({
+    url: '/feedback/selectList',
+    method: 'get',
+    params: query
+  })
+}

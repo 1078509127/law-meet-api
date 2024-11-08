@@ -8,11 +8,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.law.meet.db.dao.SysCertApprovalMapper;
 import com.example.law.meet.db.dao.SysMeetApprovalMapper;
 import com.example.law.meet.db.dao.SysMeetMapper;
-import com.example.law.meet.db.entity.SysCert;
-import com.example.law.meet.db.entity.SysMeet;
-import com.example.law.meet.db.entity.SysMeetApproval;
+import com.example.law.meet.db.entity.*;
 import com.example.law.meet.manager.service.SysMeetService;
-import com.example.law.meet.db.entity.SysMeetExample;
 import com.example.law.meet.manager.vo.ApprovalVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,8 +31,8 @@ public class SysMeetServiceImpl extends ServiceImpl<SysMeetMapper, SysMeet> impl
 
 
     @Override
-    public IPage<SysMeetExample> list(IPage<SysMeetExample> page, String name, String phone, Byte[] status) {
-        IPage<SysMeetExample> iPage = sysMeetMapper.listPage(page, name, phone, status);
+    public IPage<SysMeetExample> list(IPage<SysMeetExample> page, String name, String phone) {
+        IPage<SysMeetExample> iPage = sysMeetMapper.listPage(page, name, phone);
         return iPage;
     }
 
@@ -50,13 +47,26 @@ public class SysMeetServiceImpl extends ServiceImpl<SysMeetMapper, SysMeet> impl
         }
         sysMeet.setStatus(Byte.valueOf(approvalVo.getStatus()));
         int i = sysMeetMapper.updateById(sysMeet);
-        SysMeetApproval meetApproval = new SysMeetApproval();
-        meetApproval.setAdminId(approvalVo.getAdminId());
-        meetApproval.setMeetId(approvalVo.getId());
-        meetApproval.setApproval(approvalVo.getTraceMsg());
-        meetApproval.setCreateTime(new Date());
-        meetApproval.setUpdateTime(new Date());
-        int j = sysMeetApprovalMapper.insert(meetApproval);
+
+        LambdaQueryWrapper<SysMeetApproval> approvalWrapper = new LambdaQueryWrapper<>();
+        approvalWrapper.eq(SysMeetApproval::getMeetId, approvalVo.getId());
+        SysMeetApproval approval = sysMeetApprovalMapper.selectOne(approvalWrapper);
+
+        int j = 0;
+        if (StringUtils.isEmpty(approval)){
+            approval = new SysMeetApproval();
+            approval.setAdminId(approvalVo.getAdminId());
+            approval.setMeetId(approvalVo.getId());
+            approval.setApproval(approvalVo.getTraceMsg());
+            approval.setCreateTime(new Date());
+            approval.setUpdateTime(new Date());
+            j = sysMeetApprovalMapper.insert(approval);
+        }else {
+            approval.setAdminId(approvalVo.getAdminId());
+            approval.setApproval(approvalVo.getTraceMsg());
+            approval.setUpdateTime(new Date());
+            sysMeetApprovalMapper.updateById(approval);
+        }
         if (i>0 && j>0){
             return 1;
         }
@@ -65,14 +75,16 @@ public class SysMeetServiceImpl extends ServiceImpl<SysMeetMapper, SysMeet> impl
 
     @Override
     public void download(List<Integer> id, HttpServletResponse response) throws IOException {
-        LambdaQueryWrapper<SysMeet> wrapper = new LambdaQueryWrapper<>();
-        wrapper.in(SysMeet::getId, id);
-        List<SysMeet> sysMeets = sysMeetMapper.selectList(wrapper);
+        String[] statusList =  {"未审核", "通过","驳回","取消"};
+        List<SysMeetExample> sysMeets = sysMeetMapper.selectLists(id);
+        sysMeets.forEach( sysMeetExample -> {
+            sysMeetExample.setStatusStr(statusList[sysMeetExample.getStatus()]);
+        });
 
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Disposition", "attachment;filename=" + "预约信息表.xlsx");
 
-        EasyExcel.write(response.getOutputStream(), SysCert.class).sheet("Sheet1").doWrite(sysMeets);
+        EasyExcel.write(response.getOutputStream(), SysMeetExample.class).sheet("Sheet1").doWrite(sysMeets);
     }
 }

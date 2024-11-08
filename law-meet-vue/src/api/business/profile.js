@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function changePassword(data) {
   return request({
-    url: '/profile/password',
+    url: '/auth/password',
     method: 'post',
     data
   })

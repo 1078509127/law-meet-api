@@ -1,23 +1,20 @@
 package com.example.law.meet.client.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.example.law.meet.client.service.SysCertService;
 import com.example.law.meet.common.utils.Result;
 import com.example.law.meet.db.entity.SysCert;
+import com.example.law.meet.db.entity.SysCertExample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
+
 
 /**
  * 认证中心
@@ -38,12 +35,14 @@ public class SysCertController {
                       @RequestParam("wkCard")String wkCard,
                       @RequestParam("city")String city,
                       @RequestParam("sex")String sex,
-                      @RequestParam("baDate")String baDate) throws IOException {
+                      @RequestParam("basDate")String basDate,
+                      @RequestParam("baeDate")String baeDate) throws IOException {
+
         Byte gender = 0;
         if (sex.equals("女")){
-            gender = 2;
-        }else {
             gender = 1;
+        }else {
+            gender = 0;
         }
 
         SysCert sysCert = new SysCert();
@@ -54,7 +53,8 @@ public class SysCertController {
         sysCert.setWkCard(wkCard);
         sysCert.setCity(city);
         sysCert.setGender(gender);
-        sysCert.setBaDate(LocalDate.parse(baDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay());
+        sysCert.setBasDate(LocalDate.parse(basDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay());
+        sysCert.setBaeDate(LocalDate.parse(baeDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay());
         sysCert.setCreateTime(LocalDateTime.now());
         sysCert.setUpdateTime(LocalDateTime.now());
         int add = sysCertService.add(file, sysCert);
@@ -65,8 +65,11 @@ public class SysCertController {
     }
 
     @GetMapping("/select")
-    public Result select(@RequestParam Integer userId){
-        SysCert select = sysCertService.select(userId);
+    public Result select(@RequestParam Integer userId,@RequestParam String status){
+        List<String> list = Arrays.asList(status.split(","));
+        List<Integer> statusList = list.stream().map(Integer::parseInt).collect(Collectors.toList());
+
+        SysCertExample select = sysCertService.select(userId,statusList);
         return Result.success(select);
     }
 }

@@ -5,8 +5,7 @@
     <breadcrumb class="breadcrumb-container"/>
 
     <div class="right-menu">
-      <template v-if="device!=='mobile'">
-
+      <!-- <template v-if="device!=='mobile'">
         <el-tooltip :content="$t('navbar.screenfull')" effect="dark" placement="bottom">
           <screenfull class="screenfull right-menu-item"/>
         </el-tooltip>
@@ -20,7 +19,7 @@
         <el-tooltip :content="$t('navbar.theme')" effect="dark" placement="bottom">
           <theme-picker class="theme-switch right-menu-item"/>
         </el-tooltip>
-      </template>
+      </template> -->
 
       <el-dropdown class="avatar-container right-menu-item" trigger="click">
         <div class="avatar-wrapper">
@@ -33,7 +32,7 @@
               {{ $t('navbar.dashboard') }}
             </el-dropdown-item>
           </router-link>
-          <el-dropdown-item divided>
+          <!-- <el-dropdown-item divided>
             <a target="_blank" href="https://github.com/qiguliuxing/dts-shop">
               GitHub
             </a>
@@ -42,7 +41,7 @@
             <a target="_blank" href="https://gitee.com/qiguliuxing/dts-shop">
               码云
             </a>
-          </el-dropdown-item>
+          </el-dropdown-item> -->
           <el-dropdown-item divided>
             <router-link to="/profile/password">
               密码修改

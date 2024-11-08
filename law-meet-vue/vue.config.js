@@ -4,7 +4,7 @@ const path = require('path')
 function resolve(dir) {
   return path.join(__dirname, dir)
 }
-
+const webpack = require('webpack')
 const name = 'dts-shop' // page title
 
 // If your port is set to 80,
@@ -23,6 +23,7 @@ module.exports = {
    * In most cases please use '/' !!!
    * Detail: https://cli.vuejs.org/config/#publicpath
    */
+  lintOnSave: false,
   publicPath: './',
   outputDir: 'dist',
   assetsDir: 'static',
@@ -54,7 +55,13 @@ module.exports = {
       alias: {
         '@': resolve('src')
       }
-    }
+    },
+    plugins: [
+      new webpack.ProvidePlugin({
+        'window.Quill': 'quill/dist/quill.js',
+        Quill: 'quill/dist/quill.js'
+      })
+    ]
   },
   chainWebpack(config) {
     // it can improve the speed of the first screen, it is recommended to turn on preload

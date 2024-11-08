@@ -37,12 +37,12 @@ public class SysMeetController {
     }
 
     @GetMapping("/selectByUserId")
-    public Result selectByUserId(@RequestParam Integer userId, @RequestParam String status){
+    public Result selectByUserId(@RequestParam Integer userId, @RequestParam String status,@RequestParam(required = false)String people){
 
         List<String> list = Arrays.asList(status.split(","));
         List<Integer> statusList = list.stream().map(Integer::parseInt).collect(Collectors.toList());
 
-        List<SysMeet> sysMeets = sysMeetService.selectByUserId(userId,statusList);
+        List<SysMeet> sysMeets = sysMeetService.selectByUserId(userId,statusList,people);
         return Result.success(sysMeets);
     }
 

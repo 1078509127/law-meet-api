@@ -3,6 +3,7 @@ package com.example.law.meet.manager.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.law.meet.common.utils.Result;
+import com.example.law.meet.db.entity.SysCertExample;
 import com.example.law.meet.db.entity.SysUser;
 import com.example.law.meet.manager.service.SysCertService;
 import com.example.law.meet.manager.vo.ApprovalVo;
@@ -26,7 +27,7 @@ public class SysCertController {
     @GetMapping("/list")
     public Result list(@RequestParam(required = false) String userName, @RequestParam(required = false) String mobile,
                        @RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer limit){
-        IPage<SysUser> pages = new Page<>(page, limit);
+        IPage<SysCertExample> pages = new Page<>(page, limit);
 
         return Result.success( sysCertService.list(pages,userName,mobile));
     }

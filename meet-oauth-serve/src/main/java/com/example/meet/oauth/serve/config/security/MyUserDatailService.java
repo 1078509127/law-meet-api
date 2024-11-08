@@ -39,6 +39,6 @@ public class MyUserDatailService implements UserDetailsService {
         // 角色必须以`ROLE_`开头，数据库中没有，则在这里加
         authorities.add(new SimpleGrantedAuthority("ROLE_admin"));
         // 因为数据库是明文，所以这里需加密密码
-        return new MyUserDetails(userInfo.getId(),userInfo.getUserName(), passwordEncoder.encode(userInfo.getPassWord()),userInfo.getNickname(), authorities);
+        return new MyUserDetails(userInfo.getId(),userInfo.getUserName(), userInfo.getPassWord(),userInfo.getNickname(), authorities);
     }
 }

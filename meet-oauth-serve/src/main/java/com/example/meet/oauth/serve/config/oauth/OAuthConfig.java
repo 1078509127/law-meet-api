@@ -49,12 +49,6 @@ public class OAuthConfig extends AuthorizationServerConfigurerAdapter {
     @Resource
     private MyUserDatailService myUserDatailService;
 
-    /*@Override
-    public void configure(ResourceServerSecurityConfigurer resources) {
-        resources.resourceId(DEMO_RESOURCE_ID);
-        // 其他配置...
-    }*/
-
     //允许资源服务调用
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {

@@ -6,15 +6,14 @@ import java.util.*;
 import javax.servlet.http.HttpServletResponse;
 
 import com.example.law.meet.common.captcha.CaptchaCodeManager;
-import com.example.law.meet.common.utils.AdminResponseUtil;
-import com.example.law.meet.common.utils.JacksonUtil;
-import com.example.law.meet.common.utils.ResponseUtil;
-import com.example.law.meet.common.utils.AdminResponseCode;
+import com.example.law.meet.common.utils.*;
+import com.example.law.meet.common.utils.Base64;
+import com.example.law.meet.common.utils.UUID;
 import com.example.law.meet.db.entity.DtsAdmin;
 import com.example.law.meet.db.util.VerifyCodeUtils;
-import com.example.law.meet.common.utils.UUID;
 import com.example.law.meet.manager.service.DtsPermissionService;
 import com.example.law.meet.manager.service.DtsRoleService;
+import com.example.law.meet.manager.service.SysAdminService;
 import com.example.law.meet.manager.util.Permission;
 import com.example.law.meet.manager.util.PermissionUtil;
 import org.apache.shiro.SecurityUtils;
@@ -36,7 +35,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSONObject;
-import com.example.law.meet.common.utils.Base64;
+
+import static com.example.law.meet.common.utils.AdminResponseCode.ADMIN_INVALID_OLD_PASSWORD;
 
 @RestController
 @RequestMapping("/auth")
@@ -48,6 +48,8 @@ public class SysAdminController {
 	private DtsRoleService roleService;
 	@Autowired
 	private DtsPermissionService permissionService;
+	@Autowired
+	private SysAdminService sysAdminService;
 
 
 	@PostMapping("/login")
@@ -125,6 +127,36 @@ public class SysAdminController {
 
 		logger.info("【请求结束】系统管理->用户信息获取,响应结果:{}", JSONObject.toJSONString(data));
 		return ResponseUtil.ok(data);
+	}
+
+	@PostMapping("/password")
+	public Object create(@RequestBody String body) {
+
+		String oldPassword = JacksonUtil.parseString(body, "oldPassword");
+		String newPassword = JacksonUtil.parseString(body, "newPassword");
+		if (StringUtils.isEmpty(oldPassword)) {
+			return ResponseUtil.badArgument();
+		}
+		if (StringUtils.isEmpty(newPassword)) {
+			return ResponseUtil.badArgument();
+		}
+
+		Subject currentUser = SecurityUtils.getSubject();
+		DtsAdmin admin = (DtsAdmin) currentUser.getPrincipal();
+
+		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+		if (!encoder.matches(oldPassword, admin.getPassword())) {
+			logger.info("系统管理->修改密码 错误:{}", ADMIN_INVALID_OLD_PASSWORD.desc());
+			return AdminResponseUtil.fail(ADMIN_INVALID_OLD_PASSWORD);
+		}
+
+		String encodedNewPassword = encoder.encode(newPassword);
+		admin.setPassword(encodedNewPassword);
+
+		sysAdminService.updateById(admin);
+
+		logger.info("【请求结束】系统管理->修改密码,响应结果:{}", "成功!");
+		return ResponseUtil.ok();
 	}
 
 	@Autowired

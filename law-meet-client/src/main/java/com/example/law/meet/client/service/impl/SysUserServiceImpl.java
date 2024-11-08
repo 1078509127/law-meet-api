@@ -1,9 +1,9 @@
 package com.example.law.meet.client.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.law.meet.client.service.SysUserService;
-import com.example.law.meet.client.utils.SecurityUtils;
 import com.example.law.meet.db.dao.SysUserMapper;
 import com.example.law.meet.db.entity.SysUser;
 import org.springframework.http.HttpEntity;
@@ -11,14 +11,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 
 @Service
@@ -40,19 +40,28 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Autowired(required = false)
     private SysUserMapper sysUserMapper;
 
+    @Autowired(required = false)
+    private PasswordEncoder passwordEncoder;
+
     @Override
     public ResponseEntity login(SysUser user) {
         HttpHeaders headers = new HttpHeaders();
         headers.setBasicAuth(clientId,clientSecret);
 
         MultiValueMap<String,Object> reqBody = new LinkedMultiValueMap<>();
+
         reqBody.add("username",user.getUserName());
         reqBody.add("password",user.getPassWord());
         reqBody.add("client-id",clientId);
         reqBody.add("grant_type","password");
 
         HttpEntity httpEntity = new HttpEntity(reqBody,headers);
-        ResponseEntity<String> responseEntity = restTemplate.postForEntity(accessTokenUri, httpEntity, String.class);
+        ResponseEntity<String> responseEntity = null;
+        try {
+            responseEntity = restTemplate.postForEntity(accessTokenUri, httpEntity, String.class);
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
         return responseEntity;
     }
 

@@ -96,15 +96,19 @@ export default {
   },
   created() {
     chart().then(response => {
-      this.userOrderCnt = response.data.data.userOrderCnt
-      this.orderAmts = response.data.data.orderAmts
-      this.categorySell = response.data.data.categorySell
+      this.userOrderCnt.dayData = response.data.data.dayData
+      this.userOrderCnt.orderCnt = response.data.data.orderCnt
+      this.userOrderCnt.userCnt = response.data.data.userCnt
+
+      this.orderAmts.dayData = response.data.data.dayData
+      this.orderAmts.orderAmtData = response.data.data.orderCnt
+      this.orderAmts.orderCntData = response.data.data.userCnt
     })
     info().then(response => {
-      this.userTotal = response.data.data.userTotal
-      this.goodsTotal = response.data.data.goodsTotal
-      this.productTotal = response.data.data.productTotal
-      this.orderTotal = response.data.data.orderTotal
+      this.userTotal = response.data.data.users
+      this.goodsTotal = response.data.data.meets
+      this.productTotal = response.data.data.certs
+      this.orderTotal = response.data.data.unMeets
     })
   },
   methods: {

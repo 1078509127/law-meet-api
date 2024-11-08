@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface SysMeetService extends IService<SysMeet> {
 
-    IPage<SysMeetExample> list(IPage<SysMeetExample> page, String name, String phone, Byte[] status);
+    IPage<SysMeetExample> list(IPage<SysMeetExample> page, String name, String phone);
 
     int meetApproval(ApprovalVo approvalVo);
 

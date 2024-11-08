@@ -148,6 +148,74 @@ export const asyncRouterMap = [
       
     ]
   },
+  {
+    path: '/announce',
+    component: Layout,
+    redirect: 'noredirect',
+    alwaysShow: true,
+    name: 'goodsManage',
+    meta: {
+      title: '发布公告',
+      icon: 'tab'
+    },
+    children: [
+      {
+        path: 'address',
+        component: () => import('@/views/announce/address'),
+        name: 'address',
+        meta: {
+          title: '地址查询',
+          icon: 'international',
+          noCache: true
+        }
+      },
+      {
+        path: 'attent',
+        component: () => import('@/views/announce/attent'),
+        name: 'attent',
+        meta: {
+          title: '注意事项',
+          icon: 'example',
+          noCache: true
+        }
+      },
+      {
+        path: 'message',
+        component: () => import('@/views/announce/message'),
+        name: 'message',
+        meta: {
+          title: '消息公告',
+          icon: 'example',
+          noCache: true
+        }
+      },
+      
+    ]
+  },
+
+  {
+    path: '/feedback',
+    component: Layout,
+    redirect: 'noredirect',
+    alwaysShow: true,
+    name: 'goodsManage',
+    meta: {
+      title: '意见反馈',
+      icon: 'tab'
+    },
+    children: [
+      {
+        path: 'feedback',
+        component: () => import('@/views/feedback/feedback'),
+        name: 'feedback',
+        meta: {
+          title: '意见反馈',
+          icon: 'international',
+          noCache: true
+        }
+      },
+    ]
+  },
 
   // {
   //   path: '/goods',

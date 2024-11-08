@@ -5,13 +5,16 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.law.meet.client.service.SysMeetService;
 import com.example.law.meet.client.vo.SysMeetVo;
 import com.example.law.meet.common.utils.DateUtil;
-import com.example.law.meet.db.dao.SysCertApprovalMapper;
+import com.example.law.meet.db.dao.SysMeetApprovalMapper;
 import com.example.law.meet.db.dao.SysMeetMapper;
 import com.example.law.meet.db.entity.SysCertApproval;
 import com.example.law.meet.db.entity.SysMeet;
+import com.example.law.meet.db.entity.SysMeetApproval;
+import com.example.law.meet.db.entity.SysMeetExample;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -21,7 +24,7 @@ public class SysMeetServiceImpl extends ServiceImpl<SysMeetMapper, SysMeet> impl
     @Autowired
     private SysMeetMapper sysMeetMapper;
     @Autowired
-    private SysCertApprovalMapper sysCertApprovalMapper;
+    private SysMeetApprovalMapper sysMeetApprovalMapper;
 
     @Override
     public int add(SysMeet sysMeet) {
@@ -29,9 +32,12 @@ public class SysMeetServiceImpl extends ServiceImpl<SysMeetMapper, SysMeet> impl
     }
 
     @Override
-    public List<SysMeet> selectByUserId(Integer userId,List<Integer> status) {
+    public List<SysMeet> selectByUserId(Integer userId,List<Integer> status,String people) {
         LambdaQueryWrapper<SysMeet> queryWrapper = new LambdaQueryWrapper<SysMeet>();
         queryWrapper.eq(SysMeet::getUserId, userId).in(SysMeet::getStatus,status);
+        if (!StringUtils.isEmpty(people)){
+            queryWrapper.like(SysMeet::getPeople, people);
+        }
         return sysMeetMapper.selectList(queryWrapper);
     }
 
@@ -43,18 +49,20 @@ public class SysMeetServiceImpl extends ServiceImpl<SysMeetMapper, SysMeet> impl
     }
 
     @Override
-    public SysMeetVo approvalInfo(Integer id) {
+    public SysMeetExample approvalInfo(Integer id) {
+        SysMeetExample sysMeetExample = new SysMeetExample();
+
         SysMeet sysMeet = sysMeetMapper.selectById(id);
+        if (!StringUtils.isEmpty(sysMeet)){
+            BeanUtils.copyProperties(sysMeet,sysMeetExample);
+        }
 
-        LambdaQueryWrapper<SysCertApproval> queryWrapper = new LambdaQueryWrapper<SysCertApproval>();
-        queryWrapper.eq(SysCertApproval::getCertId,id);
-        SysCertApproval sysApproval = sysCertApprovalMapper.selectOne(queryWrapper);
-
-        SysMeetVo sysMeetVo = new SysMeetVo();
-        BeanUtils.copyProperties(sysMeet,sysMeetVo);
-        sysMeetVo.setStartTime(DateUtil.LocalDateTimeToString(sysMeet.getStartTime()));
-        sysMeetVo.setEndTime(DateUtil.LocalDateTimeToString(sysMeet.getEndTime()));
-        sysMeetVo.setApproval(sysApproval.getApproval());
-        return sysMeetVo;
+        LambdaQueryWrapper<SysMeetApproval> queryWrapper = new LambdaQueryWrapper<SysMeetApproval>();
+        queryWrapper.eq(SysMeetApproval::getMeetId,id);
+        SysMeetApproval sysApproval = sysMeetApprovalMapper.selectOne(queryWrapper);
+        if (!StringUtils.isEmpty(sysApproval)){
+            sysMeetExample.setApproval(sysApproval.getApproval());
+        }
+        return sysMeetExample;
     }
 }

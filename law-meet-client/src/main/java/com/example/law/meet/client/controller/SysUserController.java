@@ -14,6 +14,7 @@ import com.example.law.meet.common.utils.Result;
 import com.example.law.meet.db.entity.SysUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,23 +38,34 @@ public class SysUserController {
     @Autowired(required = false)
     private WxMaService wxMaService;
 
+    @Autowired(required = false)
+    private PasswordEncoder passwordEncoder;
+
     @PostMapping("/login")
-    public Result login(@RequestBody SysUser user){
-        ResponseEntity login = sysUserService.login(user);
-        Object body = login.getBody();
-        Map map = JSONObject.parseObject((String)body, Map.class);
-        if (map.containsKey("access_token")){
-            Map<Object, Object> result = new HashMap<Object, Object>();
-            UserInfo userInfo = new UserInfo();
-            userInfo.setUserId((Integer) map.get("userId"));
-            userInfo.setUserName((String) map.get("userName"));
-            userInfo.setNickName((String) map.get("nickname"));
-            userInfo.setAuthorities((List<String>) map.get("authorities"));
-            result.put("token", map.get("access_token"));
-            result.put("userInfo", userInfo);
-            return Result.success(result);
+    public Result login(@RequestBody SysUser user) {
+        Result results = new Result();
+        try {
+            ResponseEntity login = sysUserService.login(user);
+            Object body = login.getBody();
+            Map map = JSONObject.parseObject((String) body, Map.class);
+            if (map.containsKey("access_token")) {
+                Map<Object, Object> result = new HashMap<Object, Object>();
+                UserInfo userInfo = new UserInfo();
+                userInfo.setUserId((Integer) map.get("userId"));
+                userInfo.setUserName((String) map.get("userName"));
+                userInfo.setNickName((String) map.get("nickname"));
+                userInfo.setAuthorities((List<String>) map.get("authorities"));
+                result.put("token", map.get("access_token"));
+                result.put("userInfo", userInfo);
+                results.setCode(200);
+                results.setData(result);
+            }
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            results.setCode(400);
+            results.setMessage("用户名或密码错误");
         }
-        return Result.fail();
+        return results;
     }
 
     @PostMapping("/loginByWx")
@@ -81,7 +93,7 @@ public class SysUserController {
         if (user == null) {
             user = new SysUser();
             user.setUserName(openId);
-            user.setPassWord(openId);
+            user.setPassWord(passwordEncoder.encode(openId));
             user.setWeixinOpenid(openId);
             user.setAvatar("https://9ly7904782sq.vicp.fun/wx/storage/用户.png");
             user.setNickname(userInfo.getNickName());
@@ -101,10 +113,11 @@ public class SysUserController {
         }
 
         // token
+        user.setPassWord(openId);
         ResponseEntity login = sysUserService.login(user);
         Object body = login.getBody();
-        Map map = JSONObject.parseObject((String)body, Map.class);
-        if (!map.containsKey("access_token")){
+        Map map = JSONObject.parseObject((String) body, Map.class);
+        if (!map.containsKey("access_token")) {
             return Result.fail();
         }
         Map<Object, Object> result = new HashMap<Object, Object>();
@@ -129,12 +142,12 @@ public class SysUserController {
 
         List<SysUser> userList = sysUserService.queryByUsername(userName);
         if (userList.size() > 0) {
-            return Result.fail( "用户名已注册");
+            return Result.fail("用户名已注册");
         }
 
         userList = sysUserService.queryByMobile(mobile);
         if (userList.size() > 0) {
-            return Result.fail( "手机号已注册");
+            return Result.fail("手机号已注册");
         }
 
         // 如果是小程序注册，则必须非空(账号注册也必须在数据库中保存openid，后续支付使用)
@@ -153,17 +166,15 @@ public class SysUserController {
         // 非空，则是小程序注册
         // 验证openid
         SysUser user = null;
-        //BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         user = sysUserService.queryByOid(openId);
         if (!StringUtils.isEmpty(user)) {
             String checkUsername = user.getUserName();
             String checkPassword = user.getPassWord();
-            if (!checkUsername.equals(openId) || !checkPassword.equals(openId)) {
+            if (!checkUsername.equals(openId) || !passwordEncoder.matches(openId, checkPassword)) {
                 return Result.fail("openid已绑定账号");
             }
-            //String encodedPassword = encoder.encode(password);
             user.setUserName(userName);
-            user.setPassWord(password);
+            user.setPassWord(passwordEncoder.encode(password));
             user.setMobile(mobile);
             user.setNickname(userName);
             //user.setWeixinOpenid(openId);
@@ -171,10 +182,9 @@ public class SysUserController {
             user.setLastLoginIp(IpUtil.getIpAddr(request));
             sysUserService.updateById(user);
         } else {
-            //String encodedPassword = encoder.encode(password);
             user = new SysUser();
             user.setUserName(userName);
-            user.setPassWord(password);
+            user.setPassWord(passwordEncoder.encode(password));
             user.setMobile(mobile);
             user.setWeixinOpenid(openId);
             user.setAvatar("https://9ly7904782sq.vicp.fun/wx/storage/用户.png");
@@ -186,9 +196,10 @@ public class SysUserController {
             sysUserService.add(user);
         }
         //token
+        user.setPassWord(password);
         ResponseEntity login = sysUserService.login(user);
-        Map map = JSONObject.parseObject((String)login.getBody(), Map.class);
-        if (!map.containsKey("access_token")){
+        Map map = JSONObject.parseObject((String) login.getBody(), Map.class);
+        if (!map.containsKey("access_token")) {
             return Result.fail();
         }
         //userInfo
@@ -205,10 +216,11 @@ public class SysUserController {
 
 
     @PostMapping("/logout")
-    public void logout(@RequestBody SysUser user){
+    public void logout(@RequestBody SysUser user) {
         sysUserService.logout(user);
     }
 
     @PostMapping("/userInfo")
-    public void getUserInfo(@RequestBody SysUser user){ }
+    public void getUserInfo(@RequestBody SysUser user) {
+    }
 }

@@ -39,4 +39,7 @@ public class SysUser {
 
     private Byte status;
 
+    private LocalDateTime addTime;
+    private LocalDateTime updateTime;
+
 }
